@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: faultline-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - SANDBOX_BASE_DIR=/tmp/faultline
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - DEFAULT_LLM_MODEL=${DEFAULT_LLM_MODEL:-gemini-2.0-flash}
+    volumes:
+      - faultline-db:/app/data
+      - faultline-sandbox:/tmp/faultline
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: faultline-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000/api
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  faultline-db:
+    driver: local
+  faultline-sandbox:
+    driver: local

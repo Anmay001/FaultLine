@@ -126,6 +126,10 @@ class RepositoryCloner:
             return target_dir
         except GitCommandError as e:
             err_msg = str(e.stderr or str(e))
+            if "could not read Username" in err_msg or "Authentication failed" in err_msg or "Repository not found" in err_msg:
+                raise RepositoryClonerError(
+                    f"Repository '{valid_url}' is private or does not exist. Please ensure the repository is public."
+                )
             # If specified branch does not exist on remote, retry with repository default branch
             if config.target_branch and ("Remote branch" in err_msg or "not found in upstream" in err_msg):
                 try:

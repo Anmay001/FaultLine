@@ -34,13 +34,17 @@ class RiskSynthesizer:
         RiskSeverity.LOW: 3.0,
     }
 
+    # Ground-truth penalty multipliers:
+    # We deliberately give NOT_VERIFIED a 0.0 multiplier so false positives / hallucinations
+    # from upstream agents never unfairly degrade a developer's repository score.
     STATUS_WEIGHTS = {
         VerificationStatus.VERIFIED: 1.0,
         VerificationStatus.INSUFFICIENT_EVIDENCE: 0.6,
-        VerificationStatus.NOT_VERIFIED: 0.0,  # Unverified claims do not penalize scores
+        VerificationStatus.NOT_VERIFIED: 0.0,
     }
 
-    # Weight distribution matching Master Specification
+    # Weight distribution matching the FaultLine deterministic risk rubric
+    # Code quality, test safety, and git churn carry 65% of the overall weight.
     WEIGHTS = {
         RiskCategory.CODE: 0.25,
         RiskCategory.TEST: 0.20,

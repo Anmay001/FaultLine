@@ -23,10 +23,14 @@ class RiskCorrelator:
         file_findings_map: Dict[str, List[FindingCreate]] = defaultdict(list)
         file_categories_map: Dict[str, Set[RiskCategory]] = defaultdict(set)
 
+        # Skip top-level build manifests from single-file hotspot grouping
+        # (they frequently get modified across all PRs and would otherwise become false-positive hotspots)
+        IGNORED_HOTSPOT_FILES = {".", ".git", "package.json", "requirements.txt", "readme.md", "pyproject.toml", "cargo.toml"}
+
         for finding in findings:
             for ev in finding.evidence:
                 file_key = ev.file.strip().lower()
-                if file_key and file_key not in [".", ".git", "package.json", "requirements.txt", "readme.md"]:
+                if file_key and file_key not in IGNORED_HOTSPOT_FILES:
                     file_findings_map[ev.file].append(finding)
                     file_categories_map[ev.file].add(finding.category)
 

@@ -1,4 +1,6 @@
+
 import os
+import tempfile
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -17,7 +19,7 @@ class Settings(BaseSettings):
     SYNC_DATABASE_URL: str = f"sqlite:///{DATA_DIR / 'faultline.db'}"
     
     # Sandbox configuration
-    SANDBOX_BASE_DIR: str = os.getenv("SANDBOX_BASE_DIR", str(Path("/tmp/faultline") if os.name != "nt" else Path(os.environ.get("TEMP", "C:/Temp")) / "faultline"))
+    SANDBOX_BASE_DIR: str = os.getenv("SANDBOX_BASE_DIR", str(Path(tempfile.gettempdir()) / "faultline"))
     SANDBOX_TIMEOUT_SECONDS: int = 120
     SANDBOX_DEFAULT_CLONE_DEPTH: int = 100
     

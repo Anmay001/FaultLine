@@ -1,7 +1,9 @@
 # Environments & Secrets
 .env
+.env.*
 .env.local
 .env.*.local
+!.env.example
 *.key
 *.pem
 
@@ -47,13 +49,13 @@ frontend/node_modules/
 frontend/.next/
 frontend/out/
 out/
-build/
-dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .turbo
+.vercel
+frontend/.vercel
 
 # Database & Sandbox Storage
 data/sandbox/
@@ -61,13 +63,12 @@ data/*.db
 *.sqlite
 *.sqlite3
 repoguard.db
-/tmp/repoguard
-D:/tmp/repoguard
 
 # Operating System & IDE
 .DS_Store
 Thumbs.db
 desktop.ini
 .idea/
+.vscode/
 *.swp
 *.swo

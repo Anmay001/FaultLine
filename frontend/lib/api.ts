@@ -1,6 +1,17 @@
 import { AnalysisRun, AnalysisTriggerPayload, Repository } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api-proxy";
+function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (!envUrl) {
+    return "http://localhost:8000/api";
+  }
+  if (envUrl.startsWith("/") || envUrl.endsWith("/api")) {
+    return envUrl.replace(/\/+$/, "");
+  }
+  return `${envUrl.replace(/\/+$/, "")}/api`;
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 export async function checkBackendHealth(): Promise<{ status: string; version: string }> {
   try {

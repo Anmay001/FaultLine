@@ -1,6 +1,7 @@
 import os
 import shutil
 import stat
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -37,10 +38,10 @@ class SandboxManager:
 
         # Fallback locations for previous runs
         legacy_candidates = [
-            Path("D:/tmp/repoguard") / analysis_id,
+            Path(tempfile.gettempdir()) / "faultline" / analysis_id,
+            Path(tempfile.gettempdir()) / "repoguard" / analysis_id,
+            Path("/tmp/faultline") / analysis_id,
             Path("/tmp/repoguard") / analysis_id,
-            Path("C:/Temp/repoguard") / analysis_id,
-            Path(os.environ.get("TEMP", "C:/Temp")) / "repoguard" / analysis_id,
         ]
         for candidate in legacy_candidates:
             if candidate.exists():

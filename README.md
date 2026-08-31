@@ -117,6 +117,28 @@ python benchmark/run_evaluation.py
 
 ---
 
-## 🌐 Cloud Deployment (Vercel & Render)
+## 🗺️ Product Roadmap & Future Vision
 
-For step-by-step instructions on deploying the frontend to **Vercel** and the backend to **Render / Railway**, see the [Cloud Deployment Guide](docs/DEPLOYMENT.md).
+FaultLine is built on an **Open-Core** developer-first commercialization strategy:
+
+```
+[ Phase 1: Open-Core Foundation ] ──► [ Phase 2: Cloud & Teams ($29/mo) ] ──► [ Phase 3: CI/CD Gatekeeping ] ──► [ Phase 4: Auto-Remediation ("Fix") ]
+```
+
+- **Phase 1: Open-Core Engine (Current)**: 100% open-source local CLI, 7 domain agents, sandbox verification, zero cloud telemetry.
+- **Phase 2: FaultLine Cloud & Team Workspaces (Q4 2026)**: GitHub/Google OAuth, PostgreSQL + Redis queues, Pro ($29/dev/mo) & Enterprise tiers with private repos and SOC2 audit logs.
+- **Phase 3: Active CI/CD PR Bot & Gatekeeping (Q1 2027)**: GitHub Action blocking risky merges, inline sticky PR failure proofs, and risk drift tracking over time.
+- **Phase 4: Autonomous Remediation ("FaultLine Fix") (Q2 2027+)**: AI generates missing regression test suites for untested hotspots, opening ready-to-merge draft PRs, plus VS Code & JetBrains extensions.
+
+For the full commercial strategy, user personas, and financial architecture, see [docs/ROADMAP.md](docs/ROADMAP.md).
+
+---
+
+## 📚 Complete Documentation Index
+
+- 🗺️ **[Commercial Roadmap & SaaS Vision](docs/ROADMAP.md)**: Open-core business model, 4-phase rollout, and tiering structure.
+- 🧪 **[Reproduction & Evaluation Guide](docs/REPRODUCTION.md)**: Fast judge verification, local environment setup, and benchmark execution.
+- 🧭 **[Multi-Agent Trajectories Trace](docs/TRAJECTORIES.md)**: Complete step-by-step trace from prompt to AST tools, correlation, and sandbox verification.
+- 📅 **[Engineering Changelog](docs/CHANGELOG.md)**: 4 core iterations, the removed 10-micro-agent experiment, and our core philosophy.
+- 🌐 **[Cloud Deployment Guide](docs/DEPLOYMENT.md)**: Architecture overview for Vercel and Render deployments.
+

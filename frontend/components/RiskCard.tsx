@@ -45,7 +45,7 @@ export default function RiskCard({ finding, onInspectFile }: RiskCardProps) {
 
   return (
     <div
-      className={`rounded-2xl glass-card transition-all duration-300 border ${
+      className={`rounded-2xl glass-card transition-[border-color,background-color,box-shadow] duration-300 border ${
         finding.category === "COMPOUNDED"
           ? "border-zinc-500 bg-zinc-900/60 shadow-lg"
           : isVerified
@@ -58,11 +58,21 @@ export default function RiskCard({ finding, onInspectFile }: RiskCardProps) {
       {/* Header / Clickable summary */}
       <div
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-start justify-between p-4 cursor-pointer select-none"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsExpanded(!isExpanded);
+          }
+        }}
+        className="flex items-start justify-between p-4 cursor-pointer select-none focus-visible-ring rounded-t-2xl"
+        tabIndex={0}
+        role="button"
+        aria-expanded={isExpanded}
+        aria-controls={`evidence-${finding.id}`}
       >
         <div className="flex items-start gap-3.5 flex-1 pr-4">
           {/* Category Icon */}
-          <div className="p-2.5 rounded-xl border border-zinc-700 bg-zinc-900 text-white flex-shrink-0 mt-0.5">
+          <div className="p-2.5 rounded-xl border border-zinc-700 bg-zinc-900 text-white flex-shrink-0 mt-0.5" aria-hidden="true">
             <CategoryIcon className="w-4 h-4" />
           </div>
 
@@ -90,11 +100,11 @@ export default function RiskCard({ finding, onInspectFile }: RiskCardProps) {
                 }`}
               >
                 {isVerified ? (
-                  <ShieldCheck className="w-3.5 h-3.5 text-black" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-black" aria-hidden="true" />
                 ) : isNotVerified ? (
-                  <ShieldAlert className="w-3.5 h-3.5 text-zinc-500" />
+                  <ShieldAlert className="w-3.5 h-3.5 text-zinc-500" aria-hidden="true" />
                 ) : (
-                  <AlertCircle className="w-3.5 h-3.5 text-zinc-300" />
+                  <AlertCircle className="w-3.5 h-3.5 text-zinc-300" aria-hidden="true" />
                 )}
                 <span>{finding.verification_status.replace("_", " ")}</span>
               </div>
@@ -119,14 +129,19 @@ export default function RiskCard({ finding, onInspectFile }: RiskCardProps) {
         </div>
 
         {/* Expand/Collapse Button */}
-        <div className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors mt-1">
+        <div className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors mt-1" aria-hidden="true">
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </div>
       </div>
 
       {/* Expanded Evidence Drawer */}
       {isExpanded && (
-        <div className="p-4 pt-2 border-t border-zinc-800 space-y-3 bg-zinc-950/90 rounded-b-2xl animate-in fade-in duration-200">
+        <div
+          id={`evidence-${finding.id}`}
+          className="p-4 pt-2 border-t border-zinc-800 space-y-3 bg-zinc-950/90 rounded-b-2xl animate-in fade-in duration-200"
+          role="region"
+          aria-label="Verifiable evidence artifacts"
+        >
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono">
               Verifiable Evidence Artifacts ({finding.evidence.length})
@@ -141,7 +156,7 @@ export default function RiskCard({ finding, onInspectFile }: RiskCardProps) {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 font-mono text-zinc-200 font-medium">
-                    <FileCode className="w-3.5 h-3.5 text-zinc-400" />
+                    <FileCode className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
                     <span>{ev.file}</span>
                     {ev.line_start !== null && ev.line_start !== undefined && (
                       <span className="text-[11px] text-zinc-500">
@@ -157,10 +172,10 @@ export default function RiskCard({ finding, onInspectFile }: RiskCardProps) {
                         e.stopPropagation();
                         onInspectFile(ev.file);
                       }}
-                      className="flex items-center gap-1 text-[11px] text-zinc-300 hover:text-white font-semibold font-mono"
+                      className="flex items-center gap-1 text-[11px] text-zinc-300 hover:text-white font-semibold font-mono focus-visible-ring rounded px-2 py-1"
                     >
                       <span>View File</span>
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink className="w-3 h-3" aria-hidden="true" />
                     </button>
                   )}
                 </div>

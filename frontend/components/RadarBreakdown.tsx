@@ -45,12 +45,15 @@ export default function RadarBreakdown({
     { subject: "Documentation", score: docScore ?? 100, weight: "10%", color: "#52525b" },
   ];
 
+  const chartDescription = `Category risk profile with ${data.length} categories. ` +
+    data.map(d => `${d.subject}: ${d.score.toFixed(1)}%`).join(", ");
+
   return (
     <div className="flex flex-col p-6 rounded-2xl glass-card border border-zinc-800 shadow-2xl h-full">
       {/* Header with Switcher */}
       <div className="flex items-center justify-between pb-4 border-b border-zinc-800/80 mb-2">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-zinc-900 text-white border border-zinc-700">
+          <div className="p-2 rounded-xl bg-zinc-900 text-white border border-zinc-700" aria-hidden="true">
             <Layers className="w-4 h-4" />
           </div>
           <div>
@@ -60,27 +63,35 @@ export default function RadarBreakdown({
         </div>
 
         {/* Toggle View */}
-        <div className="flex items-center p-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-mono">
+        <div className="flex items-center p-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-mono" role="tablist" aria-label="Chart type">
           <button
             onClick={() => setChartType("radar")}
+            role="tab"
+            aria-selected={chartType === "radar"}
+            aria-controls="radar-panel"
+            id="radar-tab"
             className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-colors ${
               chartType === "radar"
                 ? "bg-white text-black font-bold"
                 : "text-zinc-400 hover:text-white"
-            }`}
+            } focus-visible-ring`}
           >
-            <PieChart className="w-3.5 h-3.5" />
+            <PieChart className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Radar</span>
           </button>
           <button
             onClick={() => setChartType("bar")}
+            role="tab"
+            aria-selected={chartType === "bar"}
+            aria-controls="bar-panel"
+            id="bar-tab"
             className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-colors ${
               chartType === "bar"
                 ? "bg-white text-black font-bold"
                 : "text-zinc-400 hover:text-white"
-            }`}
+            } focus-visible-ring`}
           >
-            <BarChart3 className="w-3.5 h-3.5" />
+            <BarChart3 className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Bar</span>
           </button>
         </div>
@@ -89,68 +100,73 @@ export default function RadarBreakdown({
       {/* Chart Visualization */}
       <div className="w-full h-64 mt-2">
         {chartType === "radar" ? (
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="50%" outerRadius="75%" data={data}>
-              <PolarGrid stroke="#27272a" />
-              <PolarAngleAxis
-                dataKey="subject"
-                tick={{ fill: "#a1a1aa", fontSize: 11, fontWeight: 500 }}
-              />
-              <PolarRadiusAxis
-                angle={30}
-                domain={[0, 100]}
-                tick={{ fill: "#52525b", fontSize: 9 }}
-              />
-              <Radar
-                name="Health Score"
-                dataKey="score"
-                stroke="#ffffff"
-                strokeWidth={2}
-                fill="#ffffff"
-                fillOpacity={0.18}
-              />
-            </RadarChart>
-          </ResponsiveContainer>
+          <div id="radar-panel" role="tabpanel" aria-labelledby="radar-tab" aria-label={chartDescription}>
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={data}>
+                <PolarGrid stroke="#27272a" />
+                <PolarAngleAxis
+                  dataKey="subject"
+                  tick={{ fill: "#a1a1aa", fontSize: 11, fontWeight: 500 }}
+                />
+                <PolarRadiusAxis
+                  angle={30}
+                  domain={[0, 100]}
+                  tick={{ fill: "#52525b", fontSize: 9 }}
+                />
+                <Radar
+                  name="Health Score"
+                  dataKey="score"
+                  stroke="#ffffff"
+                  strokeWidth={2}
+                  fill="#ffffff"
+                  fillOpacity={0.18}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} layout="vertical" margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
-              <XAxis type="number" domain={[0, 100]} stroke="#52525b" tick={{ fontSize: 10 }} />
-              <YAxis
-                type="category"
-                dataKey="subject"
-                stroke="#a1a1aa"
-                tick={{ fontSize: 11, fontWeight: 500 }}
-                width={90}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#09090b",
-                  borderColor: "#27272a",
-                  borderRadius: "0.75rem",
-                  fontSize: "12px",
-                  color: "#ffffff",
-                }}
-                formatter={(value: any) => [`${value}/100`, "Health Score"]}
-              />
-              <Bar dataKey="score" radius={[0, 6, 6, 0]}>
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.score >= 80 ? "#ffffff" : entry.score >= 60 ? "#a1a1aa" : "#52525b"}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <div id="bar-panel" role="tabpanel" aria-labelledby="bar-tab" aria-label={chartDescription}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data} layout="vertical" margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
+                <XAxis type="number" domain={[0, 100]} stroke="#52525b" tick={{ fontSize: 10 }} />
+                <YAxis
+                  type="category"
+                  dataKey="subject"
+                  stroke="#a1a1aa"
+                  tick={{ fontSize: 11, fontWeight: 500 }}
+                  width={90}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#09090b",
+                    borderColor: "#27272a",
+                    borderRadius: "0.75rem",
+                    fontSize: "12px",
+                    color: "#ffffff",
+                  }}
+                  formatter={(value: any) => [`${value}/100`, "Health Score"]}
+                />
+                <Bar dataKey="score" radius={[0, 6, 6, 0]}>
+                  {data.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.score >= 80 ? "#ffffff" : entry.score >= 60 ? "#a1a1aa" : "#52525b"}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         )}
       </div>
 
       {/* Category Pills Breakdown */}
-      <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-zinc-800/80 text-xs">
+      <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-zinc-800/80 text-xs" role="list" aria-label="Category scores">
         {data.map((item) => (
           <div
             key={item.subject}
             className="flex flex-col p-2 rounded-xl bg-zinc-950 border border-zinc-800/80"
+            role="listitem"
           >
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-zinc-400">{item.subject}</span>

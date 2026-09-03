@@ -11,17 +11,43 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
+html {
+  color-scheme: dark;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Skip link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.75rem 1.5rem;
+  background: white;
+  color: black;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  z-index: 100;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -37,6 +63,27 @@ body {
   background: #404040;
 }
 
+/* Focus visible utilities */
+.focus-visible-ring {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black;
+}
+
+.focus-visible-ring-inset {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset;
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* High-contrast Monochrome Glassmorphism utilities */
 .glass-panel {
   background: rgba(10, 10, 10, 0.85);
@@ -50,7 +97,9 @@ body {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
@@ -74,4 +123,54 @@ body {
 /* Code block typography */
 code, pre {
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Heading text wrap */
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+/* Modal/drawer overscroll containment */
+.modal-overlay,
+.drawer,
+.sheet {
+  overscroll-behavior: contain;
+}
+
+/* Input base styles for dark mode */
+select,
+input,
+textarea {
+  background-color: #0a0a0a;
+  color: #f5f5f5;
+  border-color: #262626;
+}
+
+select:focus,
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Ensure buttons have proper touch targets */
+button, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Focus styles for interactive elements */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  ring: 2px;
+  ring-color: white;
+  ring-offset: 2px;
+  ring-offset-color: black;
 }

@@ -20,13 +20,13 @@ export default function ScoreGauge({
   const strokeDashoffset = 440 - (440 * safeScore) / 100;
 
   return (
-    <div className="relative flex flex-col items-center justify-center p-6 rounded-2xl glass-card border border-zinc-800 shadow-2xl overflow-hidden group">
+    <div className="relative flex flex-col items-center justify-center p-6 rounded-2xl glass-card border border-zinc-800 shadow-2xl overflow-hidden group" role="img" aria-label={`Overall health score: ${safeScore.toFixed(1)} out of 100, ${colors.label.toLowerCase()}`}>
       {/* Background glow */}
-      <div className="absolute inset-0 opacity-15 transition-opacity duration-500 group-hover:opacity-25 glow-gradient" />
+      <div className="absolute inset-0 opacity-15 transition-opacity duration-500 group-hover:opacity-25 glow-gradient" aria-hidden="true" />
 
       <div className="relative flex items-center justify-center w-48 h-48">
         {/* SVG Circular Progress */}
-        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
+        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 160 160" aria-hidden="true">
           <circle
             cx="80"
             cy="80"
@@ -44,16 +44,16 @@ export default function ScoreGauge({
             strokeDasharray="440"
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
-            className={`${colors.text} fill-transparent transition-all duration-1000 ease-out`}
+            className={`${colors.text} fill-transparent transition-[stroke-dashoffset] duration-1000 ease-out`}
           />
         </svg>
 
         {/* Inner Content */}
         <div className="absolute flex flex-col items-center justify-center text-center">
-          <span className="text-4xl font-black tracking-tight text-white font-mono">
+          <span className="text-4xl font-black tracking-tight text-white font-mono" aria-hidden="true">
             {safeScore.toFixed(1)}
           </span>
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5 font-mono">
+          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5 font-mono" aria-hidden="true">
             Health Score
           </span>
         </div>
@@ -70,12 +70,12 @@ export default function ScoreGauge({
         {/* Verification Summary Chips */}
         <div className="flex items-center gap-2 mt-2 font-mono">
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-700 text-[11px] font-semibold text-zinc-200">
-            <ShieldCheck className="w-3.5 h-3.5 text-white" />
+            <ShieldCheck className="w-3.5 h-3.5 text-white" aria-hidden="true" />
             <span>{verifiedCount} Verified Proofs</span>
           </div>
           {refutedCount > 0 && (
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-[11px] font-semibold text-zinc-400">
-              <ShieldAlert className="w-3.5 h-3.5 text-zinc-400" />
+              <ShieldAlert className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
               <span>{refutedCount} Refuted Claims</span>
             </div>
           )}

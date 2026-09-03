@@ -79,7 +79,7 @@ class CodeRiskAgent(BaseAgent):
                 FindingCreate(
                     finding=f"Static Code Violation [{issue.code}]: {issue.message}",
                     category=RiskCategory.CODE,
-                    severity=RiskSeverity(issue.severity),
+                    severity=getattr(RiskSeverity, (issue.severity or "MEDIUM").upper(), RiskSeverity.MEDIUM),
                     confidence=0.95,
                     verification_status=VerificationStatus.VERIFIED,
                     verification_notes=f"Confirmed by static analysis rule {issue.code}.",

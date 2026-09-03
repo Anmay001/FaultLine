@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Radar,
   RadarChart,
@@ -35,17 +35,22 @@ export default function RadarBreakdown({
   docScore = 100,
 }: CategoryBreakdownProps) {
   const [chartType, setChartType] = useState<"radar" | "bar">("radar");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const data = [
-    { subject: "Code Quality", score: codeScore ?? 100, weight: "25%", color: "#ffffff" },
-    { subject: "Test Suite", score: testScore ?? 100, weight: "20%", color: "#e4e4e7" },
-    { subject: "Git Velocity", score: gitScore ?? 100, weight: "20%", color: "#d4d4d8" },
-    { subject: "Dependencies", score: depScore ?? 100, weight: "15%", color: "#a1a1aa" },
-    { subject: "Architecture", score: archScore ?? 100, weight: "10%", color: "#71717a" },
-    { subject: "Documentation", score: docScore ?? 100, weight: "10%", color: "#52525b" },
+    { subject: "Code Quality", score: Math.round(Number(codeScore ?? 100) * 10) / 10, weight: "25%", color: "#ffffff" },
+    { subject: "Test Suite", score: Math.round(Number(testScore ?? 100) * 10) / 10, weight: "20%", color: "#e4e4e7" },
+    { subject: "Git Velocity", score: Math.round(Number(gitScore ?? 100) * 10) / 10, weight: "20%", color: "#d4d4d8" },
+    { subject: "Dependencies", score: Math.round(Number(depScore ?? 100) * 10) / 10, weight: "15%", color: "#a1a1aa" },
+    { subject: "Architecture", score: Math.round(Number(archScore ?? 100) * 10) / 10, weight: "10%", color: "#71717a" },
+    { subject: "Documentation", score: Math.round(Number(docScore ?? 100) * 10) / 10, weight: "10%", color: "#52525b" },
   ];
 
-  const chartDescription = `Category risk profile with ${data.length} categories. ` +
+  const chartDescription = `Category risk profile with ${data.length} categories: ` +
     data.map(d => `${d.subject}: ${d.score.toFixed(1)}%`).join(", ");
 
   return (
@@ -65,6 +70,7 @@ export default function RadarBreakdown({
         {/* Toggle View */}
         <div className="flex items-center p-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-mono" role="tablist" aria-label="Chart type">
           <button
+            type="button"
             onClick={() => setChartType("radar")}
             role="tab"
             aria-selected={chartType === "radar"}
@@ -72,7 +78,7 @@ export default function RadarBreakdown({
             id="radar-tab"
             className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-colors ${
               chartType === "radar"
-                ? "bg-white text-black font-bold"
+                ? "bg-white text-black font-bold shadow-sm"
                 : "text-zinc-400 hover:text-white"
             } focus-visible-ring`}
           >
@@ -80,6 +86,7 @@ export default function RadarBreakdown({
             <span>Radar</span>
           </button>
           <button
+            type="button"
             onClick={() => setChartType("bar")}
             role="tab"
             aria-selected={chartType === "bar"}
@@ -87,7 +94,7 @@ export default function RadarBreakdown({
             id="bar-tab"
             className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-colors ${
               chartType === "bar"
-                ? "bg-white text-black font-bold"
+                ? "bg-white text-black font-bold shadow-sm"
                 : "text-zinc-400 hover:text-white"
             } focus-visible-ring`}
           >
@@ -97,44 +104,25 @@ export default function RadarBreakdown({
         </div>
       </div>
 
-      {/* Chart Visualization */}
-      <div className="w-full h-64 mt-2">
-        {chartType === "radar" ? (
-          <div id="radar-panel" role="tabpanel" aria-labelledby="radar-tab" aria-label={chartDescription}>
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={data}>
+      {/* Chart Visualization Container with Guaranteed Dimensions */}
+      <div className="w-full h-72 my-2 relative">
+        {!mounted ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-zinc-700 border-t-white rounded-full animate-spin" />
+          </div>
+        ) : chartType === "radar" ? (
+          <div id="radar-panel" className="w-full h-full" role="tabpanel" aria-labelledby="radar-tab" aria-label={chartDescription}>
+            <ResponsiveContainer width="100%" height="100%" minHeight={260}>
+              <RadarChart cx="50%" cy="50%" outerRadius="68%" data={data}>
                 <PolarGrid stroke="#27272a" />
                 <PolarAngleAxis
                   dataKey="subject"
-                  tick={{ fill: "#a1a1aa", fontSize: 11, fontWeight: 500 }}
+                  tick={{ fill: "#a1a1aa", fontSize: 11, fontWeight: 600 }}
                 />
                 <PolarRadiusAxis
                   angle={30}
                   domain={[0, 100]}
                   tick={{ fill: "#52525b", fontSize: 9 }}
-                />
-                <Radar
-                  name="Health Score"
-                  dataKey="score"
-                  stroke="#ffffff"
-                  strokeWidth={2}
-                  fill="#ffffff"
-                  fillOpacity={0.18}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div id="bar-panel" role="tabpanel" aria-labelledby="bar-tab" aria-label={chartDescription}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} layout="vertical" margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
-                <XAxis type="number" domain={[0, 100]} stroke="#52525b" tick={{ fontSize: 10 }} />
-                <YAxis
-                  type="category"
-                  dataKey="subject"
-                  stroke="#a1a1aa"
-                  tick={{ fontSize: 11, fontWeight: 500 }}
-                  width={90}
                 />
                 <Tooltip
                   contentStyle={{
@@ -143,10 +131,51 @@ export default function RadarBreakdown({
                     borderRadius: "0.75rem",
                     fontSize: "12px",
                     color: "#ffffff",
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)",
                   }}
-                  formatter={(value: any) => [`${value}/100`, "Health Score"]}
+                  formatter={(value: any) => [`${Number(value).toFixed(1)}/100`, "Health Score"]}
                 />
-                <Bar dataKey="score" radius={[0, 6, 6, 0]}>
+                <Radar
+                  name="Health Score"
+                  dataKey="score"
+                  stroke="#ffffff"
+                  strokeWidth={2}
+                  fill="#ffffff"
+                  fillOpacity={0.2}
+                  isAnimationActive={true}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <div id="bar-panel" className="w-full h-full" role="tabpanel" aria-labelledby="bar-tab" aria-label={chartDescription}>
+            <ResponsiveContainer width="100%" height="100%" minHeight={260}>
+              <BarChart data={data} layout="vertical" margin={{ left: 15, right: 25, top: 10, bottom: 10 }}>
+                <XAxis
+                  type="number"
+                  domain={[0, 100]}
+                  stroke="#52525b"
+                  tick={{ fontSize: 10, fill: "#a1a1aa" }}
+                />
+                <YAxis
+                  type="category"
+                  dataKey="subject"
+                  stroke="#a1a1aa"
+                  tick={{ fontSize: 11, fontWeight: 500, fill: "#e4e4e7" }}
+                  width={95}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#09090b",
+                    borderColor: "#27272a",
+                    borderRadius: "0.75rem",
+                    fontSize: "12px",
+                    color: "#ffffff",
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)",
+                  }}
+                  formatter={(value: any) => [`${Number(value).toFixed(1)}/100`, "Health Score"]}
+                />
+                <Bar dataKey="score" radius={[0, 6, 6, 0]} isAnimationActive={true}>
                   {data.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
@@ -161,7 +190,7 @@ export default function RadarBreakdown({
       </div>
 
       {/* Category Pills Breakdown */}
-      <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-zinc-800/80 text-xs" role="list" aria-label="Category scores">
+      <div className="grid grid-cols-3 gap-2 mt-auto pt-3 border-t border-zinc-800/80 text-xs" role="list" aria-label="Category scores">
         {data.map((item) => (
           <div
             key={item.subject}
